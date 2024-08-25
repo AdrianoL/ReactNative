@@ -1,3 +1,22 @@
 {
-  "extends": "@react-native/typescript-config/tsconfig.json"
+	"compilerOptions": {
+		"target": "es5", // O el nivel de ECMAScript que prefieras
+		"lib": ["dom", "dom.iterable", "esnext"], // Librerías necesarias
+		"allowJs": true, // Permite archivos JS
+		"skipLibCheck": true, // Omite la comprobación de bibliotecas
+		"esModuleInterop": true, // Compatibilidad con módulos ES
+		"allowSyntheticDefaultImports": true, // Permite imports predeterminados sintéticos
+		"strict": true, // Habilita comprobaciones estrictas
+		"forceConsistentCasingInFileNames": true, // Forzar el uso consistente de mayúsculas/minúsculas en los nombres de archivo
+		"module": "esnext", // Módulo ESNext o CommonJS según prefieras
+		"moduleResolution": "node", // Resolución de módulos
+		"resolveJsonModule": true, // Permite la importación de módulos JSON
+		"isolatedModules": true, // Aísla los módulos para compilación incremental
+		"jsx": "react-jsx", // Esto habilita el soporte para JSX
+		"noEmit": true, // No emite archivos; solo compila
+		"skipDefaultLibCheck": true,
+		"sourceMap": true
+	},
+	"include": ["src", "App.tsx"], // Incluye los archivos relevantes
+	"exclude": ["node_modules"] // Excluye los módulos de nodo
 }
