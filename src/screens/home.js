@@ -13,7 +13,7 @@ import { AuthContext } from '../context/auth';
 const Home = () => {
 	const navigation = useNavigation(); // Utiliza useNavigation para acceder al objeto de navegación
 	const [User, setUser] = useContext(AuthContext);
-	const user = User.data ? User.data : null;
+	const user = User ? User.data : null;
 	const rooms = ['Sala 1', 'Sala 2', 'Sala 3'];
 
 	const handleAddRoom = () => {
@@ -63,7 +63,7 @@ const Home = () => {
 const styles = StyleSheet.create({
 	homeContainer: {
 		flex: 1,
-		backgroundColor: '#000', // Fondo negro
+		backgroundColor: '#fff', // Fondo negro
 	},
 	contentContainer: {
 		flex: 1,

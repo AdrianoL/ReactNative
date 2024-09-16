@@ -13,6 +13,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthContext } from '../context/auth';
 
 import MaterialTextInput from '../components/utils/MaterialTextInput'; // Asegúrate de importar correctamente
+import { API_ROUTES } from '../config/apiRoutes';
 
 const SignIn = ({ navigation }) => {
 	const [email, setEmail] = useState('');
@@ -20,26 +21,22 @@ const SignIn = ({ navigation }) => {
 	const [state, setState] = useContext(AuthContext);
 
 	const handleSubmit = async () => {
-		console.log('handleSubmit called'); // Asegúrate de que handleSubmit se está llamando
 		try {
 			if (email === '' || password === '') {
 				alert('All fields are required');
 				return;
 			}
-			console.log('entra?');
-			const resp = await axios.post('http://localhost:3000/auth/user', {
+			// const resp = await axios.post('http://localhost:3000/auth/user', {
+			const resp = await axios.post(API_ROUTES.LOGIN, {
 				email,
 				password,
 			});
-			console.log('resp');
-			console.log(resp);
 			if (resp.data.error) {
 				alert(resp.data.error);
 			} else {
-				console.log('else');
-				setState(resp);
-				await AsyncStorage.setItem('auth-rn', JSON.stringify(resp.data));
-				alert('Sign In Successful');
+				const userData = resp.data;
+				setState(userData);
+				await AsyncStorage.setItem('auth-rn', JSON.stringify(userData));
 				navigation.navigate('Home');
 			}
 		} catch (error) {

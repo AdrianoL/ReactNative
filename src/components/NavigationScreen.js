@@ -1,8 +1,7 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Home from '../screens/home';
-import AddRoom from '../screens/addRoom'; // Asegúrate de que la primera letra sea mayúscula
-import ChartScreen from '../screens/chartScreen'; // Asegúrate de que la primera letra sea mayúscula
+import AddRoom from '../screens/addRoom';
 import SignUp from '../screens/signup';
 import SignIn from '../screens/signin';
 import Account from '../screens/account';
@@ -10,15 +9,28 @@ import Post from '../screens/post';
 import Links from '../screens/links';
 import { AuthContext } from '../context/auth';
 import HeaderTabs from './header/HeaderTabs';
+import { useNavigationState } from '@react-navigation/native';
 
 const Stack = createNativeStackNavigator();
 
 const NavigationScreen = () => {
-	const [state, setState] = useContext(AuthContext);
-	const authenticated = state && state.token !== '' && state.user !== null;
+	const [state] = useContext(AuthContext);
+	console.log(state); // Para depurar la estructura de 'state'
+	const authenticated = state && state.access_token && state.email;
+	console.log('Auth:', authenticated); // Depura si 'authenticated' es verdadero o falso
+
+	const currentRoute = useNavigationState((navState) => {
+		return navState ? navState.routes[navState.index] : null;
+	});
+
+	useEffect(() => {
+		if (currentRoute) {
+			console.log('Current Route:', currentRoute.name);
+		}
+	}, [currentRoute]);
 
 	return (
-		<Stack.Navigator initialRouteName="Home">
+		<Stack.Navigator initialRouteName={authenticated ? 'Home' : 'SignIn'}>
 			{authenticated ? (
 				<>
 					<Stack.Screen
@@ -34,7 +46,6 @@ const NavigationScreen = () => {
 						component={AddRoom}
 						options={{ title: 'Añadir Sala' }}
 					/>
-					<Stack.Screen name="ChartScreen" component={ChartScreen} />
 				</>
 			) : (
 				<>

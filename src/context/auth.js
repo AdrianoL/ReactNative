@@ -6,84 +6,43 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
-	const [user, setUser] = useState({
-		user: null,
-		token: '',
-	});
+	const [user, setUser] = useState(null); // Inicializar como null
 
 	// Navigation
 	const navigation = useNavigation();
 
-	// Config Axios
-	const token = user && user.token ? user.token : '';
-	axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+	// Configuración de Axios
+	useEffect(() => {
+		const token = user?.access_token || '';
+		axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+	}, [user]);
 
-	// Handle expired token or 401 error
+	// Interceptar errores de token expirado o 401
 	axios.interceptors.response.use(
-		async function (response) {
-			console.log('response');
-			console.log(response);
-			return response;
-		},
-		async function (error) {
-			let res = error.response;
-			console.log('res');
-			console.log(res);
-			if (
-				res &&
-				res?.status === 401 &&
-				res.config &&
-				!res.config._isRetryRequest
-			) {
+		(response) => response,
+		async (error) => {
+			const res = error.response;
+			if (res?.status === 401 && res.config && !res.config._isRetryRequest) {
 				await AsyncStorage.removeItem('auth-rn');
-				setUser({ user: null, token: '' });
+				setUser(null);
 				navigation.navigate('SignIn');
 			}
+			return Promise.reject(error);
 		},
 	);
 
 	useEffect(() => {
 		const loadFromAsyncStorage = async () => {
-			let data = await AsyncStorage.getItem('auth-rn');
-			if (data !== null) {
+			const data = await AsyncStorage.getItem('auth-rn');
+			if (data) {
 				const parsed = JSON.parse(data);
-				console.log('parsed');
-				console.log(parsed);
-				setUser({
-					...user,
-					firstname: parsed.firstname,
-					lastname: parsed.lastname,
-					email: parsed.email,
-					role: parsed.role,
-					image: parsed.image,
-				});
-				setUser({
-					...user,
-					user: 'jajajaja',
-					id: parsed._id,
-					firstname: parsed.firstname,
-					lastname: parsed.lastname,
-					avatar: {
-						path: parsed.path,
-						upload: parsed.upload,
-					},
-					document: parsed.document,
-					address: parsed.address,
-					email: parsed.email,
-					phone: {
-						code: parsed.code,
-						number: parsed.number,
-					},
-					accessToken: parsed.access_token,
-					refreshToken: parsed.refresh_token,
-				});
+				setUser(parsed);
 			} else {
-				// manejar el caso cuando data es null, por ejemplo:
 				console.log('No data found in AsyncStorage');
 			}
 		};
 		loadFromAsyncStorage();
-	}, [user]);
+	}, []);
 
 	return (
 		<AuthContext.Provider value={[user, setUser]}>

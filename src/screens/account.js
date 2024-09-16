@@ -24,11 +24,9 @@ const Account = ({ navigation }) => {
 	const [User, setUser] = useContext(AuthContext);
 	const [uploadImage, setUploadImage] = useState('');
 
-	const user = User.data;
-
 	useEffect(() => {
 		if (User) {
-			const { firstname, email, image } = User.data;
+			const { firstname, email, image } = User;
 			setName(firstname);
 			setEmail(email);
 			setImage(image);
@@ -93,6 +91,10 @@ const Account = ({ navigation }) => {
 		}
 	};
 
+	if (!User) {
+		return <Text>Loading...</Text>;
+	}
+
 	return (
 		<KeyboardAwareScrollView contentContainerStyle={styles.container}>
 			<View style={{ marginVertical: 100 }}>
@@ -102,13 +104,13 @@ const Account = ({ navigation }) => {
 					) : uploadImage ? (
 						<Image source={{ uri: uploadImage }} style={styles.imageStyles} />
 					) : (
-						<TouchableOpacity onPress={() => handleUpload()}>
+						<TouchableOpacity onPress={handleUpload}>
 							<FontAwesome5 name="camera" size={25} color="darkmagenta" />
 						</TouchableOpacity>
 					)}
 				</View>
 				{image && image.url ? (
-					<TouchableOpacity onPress={() => handleUpload()}>
+					<TouchableOpacity onPress={handleUpload}>
 						<FontAwesome5
 							name="camera"
 							size={25}
@@ -120,10 +122,10 @@ const Account = ({ navigation }) => {
 					<></>
 				)}
 				<Text style={styles.signupText}>
-					{user.lastname + ', ' + user.firstname}
+					{User.lastname + ', ' + User.firstname}
 				</Text>
-				<Text style={styles.emailText}>{user.email}</Text>
-				<Text style={styles.roleText}>{user.address}</Text>
+				<Text style={styles.emailText}>{User.email}</Text>
+				<Text style={styles.roleText}>{User.address}</Text>
 				<View style={{ marginHorizontal: 24 }}>
 					<Text style={{ fontSize: 16, color: '#8e93a1' }}>CONTRASEÑA</Text>
 					<TextInput
