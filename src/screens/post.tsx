@@ -1,8 +1,10 @@
-import { StyleSheet, Text, SafeAreaView } from 'react-native';
+// src/screens/post.tsx
+
 import React from 'react';
+import { StyleSheet, Text, SafeAreaView } from 'react-native';
 import FooterList from '../components/footer/FooterList';
 
-const Post = () => {
+const Post: React.FC = () => {
 	return (
 		<SafeAreaView style={styles.container}>
 			<Text style={styles.mainText}>Post</Text>
@@ -19,6 +21,7 @@ const styles = StyleSheet.create({
 	mainText: {
 		fontSize: 30,
 		textAlign: 'center',
+		marginVertical: 20,
 	},
 });
 

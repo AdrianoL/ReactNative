@@ -1,20 +1,36 @@
+// src/components/utils/MaterialTextInput.tsx
 import React, { useState, useRef, useEffect } from 'react';
-import { View, TextInput, StyleSheet, Animated } from 'react-native';
+import {
+	View,
+	TextInput,
+	StyleSheet,
+	Animated,
+	TextInputProps,
+} from 'react-native';
 
-const MaterialTextInput = ({ label, ...props }) => {
+interface MaterialTextInputProps extends TextInputProps {
+	label: string;
+}
+
+const MaterialTextInput: React.FC<MaterialTextInputProps> = ({
+	label,
+	value,
+	onChangeText,
+	...props
+}) => {
 	const [isFocused, setIsFocused] = useState(false);
-	const focusAnim = useRef(new Animated.Value(0)).current; // Animación para la etiqueta flotante
+	const focusAnim = useRef(new Animated.Value(0)).current;
 
 	useEffect(() => {
 		Animated.timing(focusAnim, {
-			toValue: isFocused || props.value !== '' ? 1 : 0,
+			toValue: isFocused || !!value ? 1 : 0,
 			duration: 200,
 			useNativeDriver: false,
 		}).start();
-	}, [isFocused, props.value, focusAnim]);
+	}, [focusAnim, isFocused, value]);
 
 	const labelStyle = {
-		position: 'absolute',
+		position: 'absolute' as const,
 		left: 0,
 		top: focusAnim.interpolate({
 			inputRange: [0, 1],
@@ -38,7 +54,8 @@ const MaterialTextInput = ({ label, ...props }) => {
 				style={styles.textInput}
 				onFocus={() => setIsFocused(true)}
 				onBlur={() => setIsFocused(false)}
-				blurOnSubmit
+				value={value}
+				onChangeText={onChangeText}
 			/>
 		</View>
 	);

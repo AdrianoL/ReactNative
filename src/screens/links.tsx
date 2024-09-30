@@ -1,18 +1,29 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { Text, Button, SafeAreaView, Image } from 'react-native';
+// src/screens/link.tsx
+
+import React, { useState } from 'react';
+import {
+	Text,
+	Button,
+	SafeAreaView,
+	Image,
+	View,
+	StyleSheet,
+} from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import { launchCamera } from 'react-native-image-picker';
 import FooterList from '../components/footer/FooterList';
-import { AuthContext } from '../context/auth';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store';
 
-const Links = () => {
-	const [hasPermission, setHasPermission] = useState(true); // Asume que se tiene permiso
+const Links: React.FC = () => {
+	const [hasPermission, setHasPermission] = useState(true);
 	const [scanned, setScanned] = useState(false);
 	const [showScanner, setShowScanner] = useState(false);
-	const [data, setData] = useState(null); // Almacena los datos escaneados
-	const [User, setUser] = useContext(AuthContext);
-	const [image, setImage] = useState(null);
+	const [data, setData] = useState<string | null>(null);
+	const [image, setImage] = useState<string | null>(null);
 	const [ocrResult, setOcrResult] = useState('');
+
+	const user = useSelector((state: RootState) => state.auth.user);
 
 	const pickImage = async () => {
 		const result = await launchCamera({
@@ -26,14 +37,14 @@ const Links = () => {
 		}
 
 		if (result.assets && result.assets.length > 0) {
-			setImage(result.assets[0].uri);
+			setImage(result.assets[0].uri || null);
 		}
 	};
 
-	const handleBarCodeScanned = ({ data }) => {
+	const handleBarCodeScanned = ({ data }: { data: string }) => {
 		setScanned(true);
 		setData(data);
-		setShowScanner(false); // Ocultar el escáner después de escanear
+		setShowScanner(false);
 	};
 
 	return (
@@ -45,15 +56,15 @@ const Links = () => {
 					captureAudio={false}
 				/>
 			) : (
-				<>
-					<Text style={{ fontSize: 20, textAlign: 'center' }}>
+				<View style={styles.container}>
+					<Text style={styles.text}>
 						Datos escaneados: {data ? data : 'No hay datos escaneados'}
 					</Text>
 					<Button
-						title={'Escanear Código QR'}
+						title="Escanear Código QR"
 						onPress={() => setShowScanner(true)}
 					/>
-					<Button title={'Capturar Imagen'} onPress={pickImage} />
+					<Button title="Capturar Imagen" onPress={pickImage} />
 					{image && (
 						<Image
 							source={{ uri: image }}
@@ -61,11 +72,24 @@ const Links = () => {
 						/>
 					)}
 					<Text>Resultado OCR: {ocrResult}</Text>
-				</>
+				</View>
 			)}
 			<FooterList />
 		</SafeAreaView>
 	);
 };
+
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		alignItems: 'center',
+		padding: 16,
+	},
+	text: {
+		fontSize: 20,
+		textAlign: 'center',
+		marginVertical: 16,
+	},
+});
 
 export default Links;
