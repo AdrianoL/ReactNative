@@ -97,7 +97,7 @@ const SignUp: React.FC = ({ navigation }) => {
 							¿Ya está registrado?{' '}
 							<Text
 								style={styles.loginLink}
-								onPress={() => navigation.navigate('SignIn')}
+								onPress={() => navigation.navigate('Login')}
 							>
 								Iniciar Sesión
 							</Text>

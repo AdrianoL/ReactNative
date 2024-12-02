@@ -1,78 +1,233 @@
-// src/screens/home.tsx
+// src/screens/Home.tsx
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-	StyleSheet,
-	Text,
-	SafeAreaView,
-	TouchableOpacity,
 	View,
+	Text,
+	StyleSheet,
+	TouchableOpacity,
+	ScrollView,
+	Alert,
+	ActivityIndicator,
+	Image,
 } from 'react-native';
-import { useNavigation, StackNavigationProp } from '@react-navigation/native';
-import { useSelector } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, AppDispatch } from '../store';
+import { clearUser } from '../slices/authSlice';
+import { API_ROUTES } from '../config/apiRoutes';
+import axios from 'axios';
+import { setUserProfile } from '../slices/userSlice';
 import FooterList from '../components/footer/FooterList';
-import { RootState } from '../store';
-import { RootStackParamList } from '../components/NavigationScreen';
-
-type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
+import HeaderTabs from '../components/header/HeaderTabs';
 
 const Home: React.FC = () => {
-	const navigation = useNavigation<HomeScreenNavigationProp>();
+	const navigation = useNavigation();
+	const dispatch = useDispatch<AppDispatch>();
 	const user = useSelector((state: RootState) => state.auth.user);
+	const [processing, setProcessing] = useState(false);
+	const [isCheckinDisabled, setIsCheckinDisabled] = useState(false);
+	const [isGateDisabled, setIsGateDisabled] = useState(false);
+	const [isCompensationDisabled, setIsCompensationDisabled] = useState(false);
 
-	const rooms = ['Check In', 'Departures', 'Compensation'];
+	useEffect(() => {
+		// Obtener privilegios y perfil del usuario
+		fetchUserProfile();
+	}, []);
 
-	const handleRoomPress = (room: string) => {
-		navigation.navigate('ChartScreen', { roomName: room });
+	const fetchUserProfile = async () => {
+		setProcessing(true);
+		try {
+			const response = await axios.get(API_ROUTES.PROFILE, {
+				headers: {
+					Authorization: `Bearer ${user?.access_token}`,
+				},
+			});
+			const profileData = response.data;
+
+			dispatch(setUserProfile(profileData));
+
+			// Establecer privilegios
+			const privileges = profileData.Privileges || [];
+			setIsCheckinDisabled(privileges.includes('AccessCheckinWorkflow'));
+			setIsGateDisabled(privileges.includes('AccessGateWorkflow'));
+			setIsCompensationDisabled(
+				privileges.some((privilege: string) =>
+					[
+						'IssueLowerCompensationAirport',
+						'IssueHigherCompensationAirport',
+						'IssueLowerCompensationCustomerCare',
+						'IssueMediumCompensationCustomerCare',
+						'IssueHigherCompensationCustomerCare',
+					].includes(privilege),
+				),
+			);
+		} catch (error) {
+			console.error(error);
+			Alert.alert('Error', 'No se pudo obtener el perfil del usuario.');
+		} finally {
+			setProcessing(false);
+		}
+	};
+
+	const navigateToCheckIn = () => {
+		if (!isCheckinDisabled) {
+			navigation.navigate('CheckIn');
+		} else {
+			Alert.alert(
+				'Acceso Denegado',
+				'No tienes permiso para acceder a Check In.',
+			);
+		}
+	};
+
+	const navigateToDepartures = () => {
+		if (isGateDisabled) {
+			navigation.navigate('Departures');
+		} else {
+			Alert.alert(
+				'Acceso Denegado',
+				'No tienes permiso para acceder a Departures.',
+			);
+		}
+	};
+
+	const navigateToCompensation = () => {
+		if (isCompensationDisabled) {
+			navigation.navigate('Compensation');
+		} else {
+			Alert.alert(
+				'Acceso Denegado',
+				'No tienes permiso para acceder a Compensation.',
+			);
+		}
+	};
+
+	const navigateToSettings = () => {
+		navigation.navigate('Settings');
 	};
 
 	return (
-		<>
-			<SafeAreaView style={styles.homeContainer}>
-				<View style={styles.contentContainer}>
-					{rooms.map((room, index) => (
-						<TouchableOpacity
-							key={index}
-							style={styles.button}
-							onPress={() => handleRoomPress(room)}
+		<View style={styles.container}>
+			<HeaderTabs />
+			<ScrollView style={styles.body}>
+				<View style={styles.cardMenu}>
+					<TouchableOpacity
+						style={styles.cardMenuItem}
+						onPress={navigateToCheckIn}
+					>
+						<Text
+							style={[
+								styles.icon,
+								{ color: isCheckinDisabled ? '#2260A4' : 'lightgray' },
+							]}
 						>
-							<Text style={styles.buttonText}>{room}</Text>
-						</TouchableOpacity>
-					))}
+							{/* Icono de Check In */}
+							🛂
+						</Text>
+						<Text
+							style={[
+								styles.cardMenuTitle,
+								{ color: isCheckinDisabled ? '#2260A4' : 'lightgray' },
+							]}
+						>
+							Check In
+						</Text>
+					</TouchableOpacity>
+					<TouchableOpacity
+						style={styles.cardMenuItem}
+						onPress={navigateToDepartures}
+					>
+						<Text
+							style={[
+								styles.icon,
+								{ color: isGateDisabled ? '#2260A4' : 'lightgray' },
+							]}
+						>
+							{/* Icono de Departures */}
+							✈️
+						</Text>
+						<Text
+							style={[
+								styles.cardMenuTitle,
+								{ color: isGateDisabled ? '#2260A4' : 'lightgray' },
+							]}
+						>
+							Departures
+						</Text>
+					</TouchableOpacity>
+					<TouchableOpacity
+						style={styles.cardMenuItem}
+						onPress={navigateToCompensation}
+					>
+						<Text
+							style={[
+								styles.icon,
+								{ color: isCompensationDisabled ? '#2260A4' : 'lightgray' },
+							]}
+						>
+							{/* Icono de Compensation */}
+							💰
+						</Text>
+						<Text
+							style={[
+								styles.cardMenuTitle,
+								{ color: isCompensationDisabled ? '#2260A4' : 'lightgray' },
+							]}
+						>
+							Compensation
+						</Text>
+					</TouchableOpacity>
 				</View>
-			</SafeAreaView>
-			<SafeAreaView style={styles.footerContainer}>
-				<FooterList />
-			</SafeAreaView>
-		</>
+			</ScrollView>
+			<FooterList />
+			{processing && (
+				<View style={styles.loading}>
+					<ActivityIndicator size="large" color="#2260A4" />
+				</View>
+			)}
+		</View>
 	);
 };
 
 const styles = StyleSheet.create({
-	homeContainer: {
+	container: {
 		flex: 1,
-		backgroundColor: '#c3c3c3',
+		backgroundColor: '#DBDAD8', // RGB(219,218,216)
 	},
-	contentContainer: {
+	body: {
 		flex: 1,
-		alignItems: 'center',
-		justifyContent: 'space-between',
-		paddingTop: 20,
 	},
-	button: {
-		backgroundColor: 'white',
-		width: '80%',
-		padding: 15,
-		borderRadius: 0,
+	cardMenu: {
+		flexDirection: 'row',
+		justifyContent: 'space-around',
+		padding: 10,
+	},
+	cardMenuItem: {
+		backgroundColor: 'rgba(255, 255, 255, 0.75)',
+		padding: 10,
 		alignItems: 'center',
+		flex: 1,
+		margin: 5,
+		borderRadius: 5,
+	},
+	icon: {
+		fontSize: 40,
 		marginBottom: 10,
 	},
-	buttonText: {
-		color: 'darkblue',
+	cardMenuTitle: {
 		fontSize: 16,
+		fontWeight: 'bold',
 	},
-	footerContainer: {
-		// Puedes añadir estilos si es necesario
+	loading: {
+		position: 'absolute',
+		top: 0,
+		right: 0,
+		bottom: 0,
+		left: 0,
+		backgroundColor: 'rgba(0,0,0,0.3)',
+		justifyContent: 'center',
+		alignItems: 'center',
 	},
 });
 

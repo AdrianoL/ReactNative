@@ -8,6 +8,7 @@ import Post from '../screens/post';
 import Links from '../screens/links';
 import SignUp from '../screens/signup';
 import SignIn from '../screens/signin';
+import Login from '../screens/login';
 import HeaderTabs from './header/HeaderTabs';
 
 export type RootStackParamList = {
@@ -17,6 +18,7 @@ export type RootStackParamList = {
 	Links: undefined;
 	SignUp: undefined;
 	SignIn: undefined;
+	Login: undefined;
 	ChartScreen: { roomName: string };
 };
 
@@ -27,7 +29,7 @@ const NavigationScreen: React.FC = () => {
 	const authenticated = user && user.access_token;
 
 	return (
-		<Stack.Navigator initialRouteName={authenticated ? 'Home' : 'SignIn'}>
+		<Stack.Navigator initialRouteName={authenticated ? 'Home' : 'Home'}>
 			{authenticated ? (
 				<>
 					<Stack.Screen
@@ -41,6 +43,11 @@ const NavigationScreen: React.FC = () => {
 				</>
 			) : (
 				<>
+					<Stack.Screen
+						name="Login"
+						component={Login}
+						options={{ headerShown: false }}
+					/>
 					<Stack.Screen name="SignUp" component={SignUp} />
 					<Stack.Screen name="SignIn" component={SignIn} />
 				</>
