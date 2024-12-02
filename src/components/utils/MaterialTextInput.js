@@ -1,30 +1,37 @@
+// src/components/utils/MaterialTextInput.js
 import React, { useState, useRef, useEffect } from 'react';
 import { View, TextInput, StyleSheet, Animated } from 'react-native';
 
-const MaterialTextInput = ({ label, ...props }) => {
+const MaterialTextInput = ({
+	label,
+	value,
+	onChangeText,
+	secureTextEntry,
+	keyboardType,
+}) => {
 	const [isFocused, setIsFocused] = useState(false);
-	const focusAnim = useRef(new Animated.Value(0)).current; // Animación para la etiqueta flotante
+	const animatedIsFocused = useRef(new Animated.Value(value ? 1 : 0)).current;
 
 	useEffect(() => {
-		Animated.timing(focusAnim, {
-			toValue: isFocused || props.value !== '' ? 1 : 0,
+		Animated.timing(animatedIsFocused, {
+			toValue: isFocused || value ? 1 : 0,
 			duration: 200,
 			useNativeDriver: false,
 		}).start();
-	}, [isFocused, props.value, focusAnim]);
+	}, [isFocused, value]);
 
 	const labelStyle = {
 		position: 'absolute',
 		left: 0,
-		top: focusAnim.interpolate({
+		top: animatedIsFocused.interpolate({
 			inputRange: [0, 1],
 			outputRange: [18, 0],
 		}),
-		fontSize: focusAnim.interpolate({
+		fontSize: animatedIsFocused.interpolate({
 			inputRange: [0, 1],
 			outputRange: [16, 12],
 		}),
-		color: focusAnim.interpolate({
+		color: animatedIsFocused.interpolate({
 			inputRange: [0, 1],
 			outputRange: ['#aaa', '#000'],
 		}),
@@ -34,27 +41,26 @@ const MaterialTextInput = ({ label, ...props }) => {
 		<View style={styles.container}>
 			<Animated.Text style={labelStyle}>{label}</Animated.Text>
 			<TextInput
-				{...props}
-				style={styles.textInput}
+				value={value}
+				onChangeText={onChangeText}
+				style={styles.input}
+				secureTextEntry={secureTextEntry}
+				keyboardType={keyboardType}
 				onFocus={() => setIsFocused(true)}
 				onBlur={() => setIsFocused(false)}
-				blurOnSubmit
 			/>
 		</View>
 	);
 };
 
 const styles = StyleSheet.create({
-	container: {
-		paddingTop: 18,
-		marginVertical: 8,
-	},
-	textInput: {
+	container: { paddingTop: 18, marginBottom: 20 },
+	input: {
 		height: 40,
 		fontSize: 16,
 		color: '#000',
 		borderBottomWidth: 1,
-		borderBottomColor: '#ddd',
+		borderBottomColor: '#555',
 	},
 });
 

@@ -1,56 +1,114 @@
-import React, { useContext, useEffect } from 'react';
+// src/components/NavigationScreen.js
+import React, { useContext } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Home from '../screens/home';
-import AddRoom from '../screens/addRoom';
-import SignUp from '../screens/signup';
-import SignIn from '../screens/signin';
-import Account from '../screens/account';
-import Post from '../screens/post';
-import Links from '../screens/links';
 import { AuthContext } from '../context/auth';
-import HeaderTabs from './header/HeaderTabs';
-import { useNavigationState } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { TouchableOpacity } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
+import Home from '../screens/Home';
+import SignIn from '../screens/SignIn';
+import SignUp from '../screens/SignUp';
+import Account from '../screens/Account';
+import FieldsList from '../screens/FieldsList';
+import FieldDetails from '../screens/FieldDetails';
+import TeamsList from '../screens/TeamsList';
+import TeamDetails from '../screens/TeamDetails';
+import PlayersList from '../screens/PlayersList';
+import PlayerDetails from '../screens/PlayerDetails';
+import Payments from '../screens/Payments';
+import Reviews from '../screens/Reviews';
 
 const Stack = createNativeStackNavigator();
 
 const NavigationScreen = () => {
-	const [state] = useContext(AuthContext);
-	console.log(state); // Para depurar la estructura de 'state'
-	const authenticated = state && state.access_token && state.email;
-	console.log('Auth:', authenticated); // Depura si 'authenticated' es verdadero o falso
+	const [user, setUser] = useContext(AuthContext);
 
-	const currentRoute = useNavigationState((navState) => {
-		return navState ? navState.routes[navState.index] : null;
-	});
+	const handleLogout = async () => {
+		setUser(null);
+		await AsyncStorage.removeItem('auth-rn');
+	};
 
-	useEffect(() => {
-		if (currentRoute) {
-			console.log('Current Route:', currentRoute.name);
-		}
-	}, [currentRoute]);
+	const authenticated = user && user.access_token;
 
 	return (
-		<Stack.Navigator initialRouteName={authenticated ? 'Home' : 'SignIn'}>
+		<Stack.Navigator>
 			{authenticated ? (
 				<>
 					<Stack.Screen
 						name="Home"
 						component={Home}
-						options={{ headerRight: () => <HeaderTabs /> }}
+						options={{
+							title: 'Inicio',
+							headerRight: () => (
+								<TouchableOpacity
+									onPress={handleLogout}
+									style={{ marginRight: 10 }}
+								>
+									<Icon name="logout" size={24} color="black" />
+								</TouchableOpacity>
+							),
+						}}
 					/>
-					<Stack.Screen name="Account" component={Account} />
-					<Stack.Screen name="Post" component={Post} />
-					<Stack.Screen name="Links" component={Links} />
 					<Stack.Screen
-						name="AddRoom"
-						component={AddRoom}
-						options={{ title: 'Añadir Sala' }}
+						name="Account"
+						component={Account}
+						options={{ title: 'Mi Cuenta' }}
 					/>
+					<Stack.Screen
+						name="FieldsList"
+						component={FieldsList}
+						options={{ title: 'Canchas' }}
+					/>
+					<Stack.Screen
+						name="FieldDetails"
+						component={FieldDetails}
+						options={{ title: 'Detalles de Cancha' }}
+					/>
+					<Stack.Screen
+						name="TeamsList"
+						component={TeamsList}
+						options={{ title: 'Equipos' }}
+					/>
+					<Stack.Screen
+						name="TeamDetails"
+						component={TeamDetails}
+						options={{ title: 'Detalles de Equipo' }}
+					/>
+					<Stack.Screen
+						name="PlayersList"
+						component={PlayersList}
+						options={{ title: 'Jugadores' }}
+					/>
+					<Stack.Screen
+						name="PlayerDetails"
+						component={PlayerDetails}
+						options={{ title: 'Detalles de Jugador' }}
+					/>
+					<Stack.Screen
+						name="Payments"
+						component={Payments}
+						options={{ title: 'Pagos' }}
+					/>
+					<Stack.Screen
+						name="Reviews"
+						component={Reviews}
+						options={{ title: 'Reseñas' }}
+					/>
+					{/* Añade más pantallas según sea necesario */}
 				</>
 			) : (
 				<>
-					<Stack.Screen name="SignUp" component={SignUp} />
-					<Stack.Screen name="SignIn" component={SignIn} />
+					<Stack.Screen
+						name="SignIn"
+						component={SignIn}
+						options={{ title: 'Iniciar Sesión' }}
+					/>
+					<Stack.Screen
+						name="SignUp"
+						component={SignUp}
+						options={{ title: 'Registrarse' }}
+					/>
 				</>
 			)}
 		</Stack.Navigator>

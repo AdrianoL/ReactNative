@@ -1,8 +1,55 @@
-// config/apiRoutes.js
-const BASE_URL = 'http://localhost:3000';
+// src/config/apiRoutes.js
+const BASE_PROTOCOL = 'https://';
+const BASE_URL = 'iduco.com';
 
 export const API_ROUTES = {
-	LOGIN: `${BASE_URL}/auth/user`,
-	REGISTER: `${BASE_URL}/auth/register`,
+	AUTH: {
+		LOGIN: `${BASE_PROTOCOL}auth.${BASE_URL}/auth/login`,
+		REGISTER: `${BASE_PROTOCOL}auth.${BASE_URL}/auth/register`,
+		USER_PROFILE: `${BASE_PROTOCOL}auth.${BASE_URL}/api/user`,
+		CHANGE_PASSWORD: `${BASE_PROTOCOL}auth.${BASE_URL}/api/change-password`,
+	},
+	USERS: {
+		GET_PROFILE: `${BASE_PROTOCOL}users.${BASE_URL}/api/user/profile`,
+		UPDATE_PROFILE: `${BASE_PROTOCOL}users.${BASE_URL}/api/user/profile`,
+	},
+	FIELDS: {
+		GET_ALL: `${BASE_PROTOCOL}fields.${BASE_URL}/api/fields`,
+		GET_BY_ID: (id) => `${BASE_PROTOCOL}fields.${BASE_URL}/api/fields/${id}`,
+		BOOK: (id) => `${BASE_PROTOCOL}fields.${BASE_URL}/api/fields/${id}/book`,
+		CANCEL_BOOKING: (fieldId, bookingId) =>
+			`${BASE_PROTOCOL}fields.${BASE_URL}/api/fields/${fieldId}/bookings/${bookingId}`,
+	},
+	TEAMS: {
+		GET_ALL: `${BASE_PROTOCOL}teams.${BASE_URL}/api/teams`,
+		GET_BY_ID: (id) => `${BASE_PROTOCOL}teams.${BASE_URL}/api/teams/${id}`,
+		CREATE: `${BASE_PROTOCOL}teams.${BASE_URL}/api/teams`,
+		UPDATE: (id) => `${BASE_PROTOCOL}teams.${BASE_URL}/api/teams/${id}`,
+		DELETE: (id) => `${BASE_PROTOCOL}teams.${BASE_URL}/api/teams/${id}`,
+		GET_STATS: (id) =>
+			`${BASE_PROTOCOL}teams.${BASE_URL}/api/teams/${id}/stats`,
+		GET_PLAYERS: (id) =>
+			`${BASE_PROTOCOL}teams.${BASE_URL}/api/teams/${id}/players`,
+		ADD_PLAYER: (id) =>
+			`${BASE_PROTOCOL}teams.${BASE_URL}/api/teams/${id}/players`,
+	},
+	PLAYERS: {
+		GET_ALL: `${BASE_PROTOCOL}teams.${BASE_URL}/api/players`,
+		GET_BY_ID: (id) => `${BASE_PROTOCOL}teams.${BASE_URL}/api/players/${id}`,
+		CREATE: `${BASE_PROTOCOL}teams.${BASE_URL}/api/players`,
+		UPDATE: (id) => `${BASE_PROTOCOL}teams.${BASE_URL}/api/players/${id}`,
+		DELETE: (id) => `${BASE_PROTOCOL}teams.${BASE_URL}/api/players/${id}`,
+	},
+	PAYMENTS: {
+		INITIATE: `${BASE_PROTOCOL}payments.${BASE_URL}/api/payments`,
+		GET_BY_ID: (id) =>
+			`${BASE_PROTOCOL}payments.${BASE_URL}/api/payments/${id}`,
+		WEBHOOK: `${BASE_PROTOCOL}payments.${BASE_URL}/api/payments/webhook`,
+	},
+	REVIEWS: {
+		CREATE: `${BASE_PROTOCOL}reviews.${BASE_URL}/api/reviews`,
+		GET_FOR_TARGET: (targetType, targetId) =>
+			`${BASE_PROTOCOL}reviews.${BASE_URL}/api/reviews/${targetType}/${targetId}`,
+	},
 	// Añade más rutas según sea necesario
 };
