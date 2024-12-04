@@ -4,8 +4,8 @@ import axios from 'axios';
 import EncryptedStorage from 'react-native-encrypted-storage';
 
 interface User {
-	access_token: string;
-	email: string;
+	accessToken: string;
+	username: string;
 	firstname: string;
 	lastname: string;
 	image?: {
@@ -19,14 +19,14 @@ type AuthContextType = [
 	React.Dispatch<React.SetStateAction<User | null>>,
 ];
 
-const AuthContext = createContext<AuthContextType>([null, () => { }]);
+const AuthContext = createContext<AuthContextType>([null, () => {}]);
 
 const AuthProvider: React.FC = ({ children }) => {
 	const [user, setUser] = useState<User | null>(null);
 
 	// Configuración de Axios
 	useEffect(() => {
-		const token = user?.access_token || '';
+		const token = user?.accessToken || '';
 		axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 	}, [user]);
 

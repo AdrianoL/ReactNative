@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../store';
 import { clearUser } from '../slices/authSlice';
 import { API_ROUTES } from '../config/apiRoutes';
+import { fetch } from 'react-native-ssl-pinning';
 import axios from 'axios';
 import { setUserProfile } from '../slices/userSlice';
 import FooterList from '../components/footer/FooterList';
@@ -26,9 +27,6 @@ const Home: React.FC = () => {
 	const dispatch = useDispatch<AppDispatch>();
 	const user = useSelector((state: RootState) => state.auth.user);
 	const [processing, setProcessing] = useState(false);
-	const [isCheckinDisabled, setIsCheckinDisabled] = useState(false);
-	const [isGateDisabled, setIsGateDisabled] = useState(false);
-	const [isCompensationDisabled, setIsCompensationDisabled] = useState(false);
 
 	useEffect(() => {
 		// Obtener privilegios y perfil del usuario
@@ -38,30 +36,22 @@ const Home: React.FC = () => {
 	const fetchUserProfile = async () => {
 		setProcessing(true);
 		try {
-			const response = await axios.get(API_ROUTES.PROFILE, {
+			const response = await fetch(API_ROUTES.AUTH.USER_PROFILE, {
+				method: 'GET',
 				headers: {
-					Authorization: `Bearer ${user?.access_token}`,
+					Authorization: `Bearer ${user?.accessToken}`,
+					// 'Content-Type': 'application/x-www-form-urlencoded',
 				},
+				disableAllSecurity: true,
 			});
+			// const response = await axios.get(API_ROUTES.USERS.GET_PROFILE, {
+			// 	headers: {
+			// 		Authorization: `Bearer ${user?.accessToken}`,
+			// 	},
+			// });
 			const profileData = response.data;
 
 			dispatch(setUserProfile(profileData));
-
-			// Establecer privilegios
-			const privileges = profileData.Privileges || [];
-			setIsCheckinDisabled(privileges.includes('AccessCheckinWorkflow'));
-			setIsGateDisabled(privileges.includes('AccessGateWorkflow'));
-			setIsCompensationDisabled(
-				privileges.some((privilege: string) =>
-					[
-						'IssueLowerCompensationAirport',
-						'IssueHigherCompensationAirport',
-						'IssueLowerCompensationCustomerCare',
-						'IssueMediumCompensationCustomerCare',
-						'IssueHigherCompensationCustomerCare',
-					].includes(privilege),
-				),
-			);
 		} catch (error) {
 			console.error(error);
 			Alert.alert('Error', 'No se pudo obtener el perfil del usuario.');
@@ -70,123 +60,30 @@ const Home: React.FC = () => {
 		}
 	};
 
-	const navigateToCheckIn = () => {
-		if (!isCheckinDisabled) {
-			navigation.navigate('CheckIn');
-		} else {
-			Alert.alert(
-				'Acceso Denegado',
-				'No tienes permiso para acceder a Check In.',
-			);
-		}
-	};
-
-	const navigateToDepartures = () => {
-		if (isGateDisabled) {
-			navigation.navigate('Departures');
-		} else {
-			Alert.alert(
-				'Acceso Denegado',
-				'No tienes permiso para acceder a Departures.',
-			);
-		}
-	};
-
-	const navigateToCompensation = () => {
-		if (isCompensationDisabled) {
-			navigation.navigate('Compensation');
-		} else {
-			Alert.alert(
-				'Acceso Denegado',
-				'No tienes permiso para acceder a Compensation.',
-			);
-		}
-	};
-
-	const navigateToSettings = () => {
-		navigation.navigate('Settings');
-	};
-
 	return (
 		<View style={styles.container}>
-			<HeaderTabs />
-			<ScrollView style={styles.body}>
-				<View style={styles.cardMenu}>
-					<TouchableOpacity
-						style={styles.cardMenuItem}
-						onPress={navigateToCheckIn}
-					>
-						<Text
-							style={[
-								styles.icon,
-								{ color: isCheckinDisabled ? '#2260A4' : 'lightgray' },
-							]}
-						>
-							{/* Icono de Check In */}
-							🛂
-						</Text>
-						<Text
-							style={[
-								styles.cardMenuTitle,
-								{ color: isCheckinDisabled ? '#2260A4' : 'lightgray' },
-							]}
-						>
-							Check In
-						</Text>
-					</TouchableOpacity>
-					<TouchableOpacity
-						style={styles.cardMenuItem}
-						onPress={navigateToDepartures}
-					>
-						<Text
-							style={[
-								styles.icon,
-								{ color: isGateDisabled ? '#2260A4' : 'lightgray' },
-							]}
-						>
-							{/* Icono de Departures */}
-							✈️
-						</Text>
-						<Text
-							style={[
-								styles.cardMenuTitle,
-								{ color: isGateDisabled ? '#2260A4' : 'lightgray' },
-							]}
-						>
-							Departures
-						</Text>
-					</TouchableOpacity>
-					<TouchableOpacity
-						style={styles.cardMenuItem}
-						onPress={navigateToCompensation}
-					>
-						<Text
-							style={[
-								styles.icon,
-								{ color: isCompensationDisabled ? '#2260A4' : 'lightgray' },
-							]}
-						>
-							{/* Icono de Compensation */}
-							💰
-						</Text>
-						<Text
-							style={[
-								styles.cardMenuTitle,
-								{ color: isCompensationDisabled ? '#2260A4' : 'lightgray' },
-							]}
-						>
-							Compensation
-						</Text>
-					</TouchableOpacity>
-				</View>
-			</ScrollView>
-			<FooterList />
-			{processing && (
-				<View style={styles.loading}>
-					<ActivityIndicator size="large" color="#2260A4" />
-				</View>
-			)}
+			<Text>Bienvenido a Home</Text>
 		</View>
+		// <View style={styles.container}>
+		// 	<HeaderTabs />
+		// 	<ScrollView style={styles.body}>
+		// 		<View style={styles.cardMenu}>
+		// 			<Text style={[styles.icon, { color: '#2260A4' }]}>
+		// 				{/* Icono de Check In */}
+		// 				🛂
+		// 			</Text>
+		// 			<Text style={[styles.cardMenuTitle, { color: '#2260A4' }]}>
+		// 				Check In
+		// 			</Text>
+		// 		</View>
+		// 	</ScrollView>
+		// 	<FooterList />
+		// 	{processing && (
+		// 		<View style={styles.loading}>
+		// 			<ActivityIndicator size="large" color="#2260A4" />
+		// 		</View>
+		// 	)}
+		// </View>
 	);
 };
 

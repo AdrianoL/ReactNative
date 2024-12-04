@@ -15,7 +15,7 @@ import { setUser } from '../slices/authSlice';
 
 interface SignUpValues {
 	name: string;
-	email: string;
+	username: string;
 	password: string;
 }
 
@@ -24,7 +24,7 @@ const SignUp: React.FC = ({ navigation }) => {
 
 	const validationSchema = Yup.object().shape({
 		name: Yup.string().required('Nombre es requerido'),
-		email: Yup.string().email('Email inválido').required('Email es requerido'),
+		username: Yup.string().username('Email inválido').required('Email es requerido'),
 		password: Yup.string()
 			.min(6, 'Mínimo 6 caracteres')
 			.required('Contraseña es requerida'),
@@ -32,7 +32,7 @@ const SignUp: React.FC = ({ navigation }) => {
 
 	const handleSubmit = async (values: SignUpValues) => {
 		try {
-			const response = await axios.post(API_ROUTES.REGISTER, values);
+			const response = await axios.post(API_ROUTES.AUTH.REGISTER, values);
 			const userData = response.data;
 			dispatch(setUser(userData));
 			await EncryptedStorage.setItem('auth-rn', JSON.stringify(userData));
@@ -47,7 +47,7 @@ const SignUp: React.FC = ({ navigation }) => {
 	return (
 		<KeyboardAwareScrollView contentContainerStyle={styles.container}>
 			<Formik
-				initialValues={{ name: '', email: '', password: '' }}
+				initialValues={{ name: '', username: '', password: '' }}
 				validationSchema={validationSchema}
 				onSubmit={handleSubmit}
 			>
@@ -72,13 +72,13 @@ const SignUp: React.FC = ({ navigation }) => {
 						)}
 						<MaterialTextInput
 							label="EMAIL"
-							value={values.email}
-							onChangeText={handleChange('email')}
-							onBlur={handleBlur('email')}
-							keyboardType="email-address"
+							value={values.username}
+							onChangeText={handleChange('username')}
+							onBlur={handleBlur('username')}
+							keyboardType="username-address"
 						/>
-						{errors.email && touched.email && (
-							<Text style={styles.errorText}>{errors.email}</Text>
+						{errors.username && touched.username && (
+							<Text style={styles.errorText}>{errors.username}</Text>
 						)}
 						<MaterialTextInput
 							label="CONTRASEÑA"

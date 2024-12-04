@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../slices/authSlice';
+import { fetch } from 'react-native-ssl-pinning';
 import axios from 'axios';
 import { API_ROUTES } from '../config/apiRoutes';
 import { AppDispatch } from '../store';
@@ -29,25 +30,50 @@ const Login: React.FC = () => {
 	const [processing, setProcessing] = useState(false);
 
 	const loginValidationSchema = Yup.object().shape({
-		email: Yup.string().required('El usuario es requerido'),
+		username: Yup.string().required('El usuario es requerido'),
 		password: Yup.string().required('La contraseña es requerida'),
 	});
 
-	const handleLogin = async (values: { email: string; password: string }) => {
+	const handleLogin = async (values: { username: string; password: string }) => {
 		setProcessing(true);
 		try {
-			const response = await axios.post(API_ROUTES.LOGIN, {
-				email: values.email,
+			const body = new URLSearchParams({
+				username: values.username,
 				password: values.password,
+				client_id: 'yourClientId',
+				client_secret: 'yourClientSecret',
+			}).toString();
+
+			// const response = await axios.post(API_ROUTES.AUTH.LOGIN, {
+			const response = await fetch(API_ROUTES.AUTH.LOGIN, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+				},
+				body,
+				disableAllSecurity: true,
 			});
 
-			const userData = response.data;
+			const data = await response.json();
+			console.log('Datos recibidos:', data);
+
+			// Asegúrate de que data tiene el formato esperado
+			const userData = data;
 			dispatch(setUser(userData));
-			// Almacena los datos de usuario de forma segura si es necesario
 			setProcessing(false);
-			navigation.navigate('Home');
+
 		} catch (error) {
 			setProcessing(false);
+			console.error('Error al iniciar sesión:', error);
+			if (error.response) {
+				console.error('Error data:', error.response.data);
+				console.error('Error status:', error.response.status);
+				console.error('Error headers:', error.response.headers);
+			} else if (error.request) {
+				console.error('Error request:', error.request);
+			} else {
+				console.error('Error message:', error.message);
+			}
 			Alert.alert('Error', 'Usuario o contraseña incorrectos');
 		}
 	};
@@ -66,7 +92,7 @@ const Login: React.FC = () => {
 			<View style={styles.loginContainer}>
 				<Text style={styles.headerText}>Agent Login</Text>
 				<Formik
-					initialValues={{ email: '', password: '' }}
+					initialValues={{ username: '', password: '' }}
 					validationSchema={loginValidationSchema}
 					onSubmit={handleLogin}
 				>
@@ -79,16 +105,16 @@ const Login: React.FC = () => {
 						touched,
 					}) => (
 						<>
-							{errors.email && touched.email && (
-								<Text style={styles.errorMessage}>{errors.email}</Text>
+							{errors.username && touched.username && (
+								<Text style={styles.errorMessage}>{errors.username}</Text>
 							)}
 							<View style={styles.inputField}>
 								<TextInput
 									style={styles.input}
 									placeholder="User ID"
-									value={values.email}
-									onChangeText={handleChange('email')}
-									onBlur={handleBlur('email')}
+									value={values.username}
+									onChangeText={handleChange('username')}
+									onBlur={handleBlur('username')}
 									autoCapitalize="none"
 									returnKeyType="next"
 								/>
@@ -111,10 +137,11 @@ const Login: React.FC = () => {
 							<TouchableOpacity
 								style={[
 									styles.button,
-									!(values.email && values.password) && styles.buttonDisabled,
+									!(values.username && values.password) &&
+									styles.buttonDisabled,
 								]}
 								onPress={() => handleSubmit()}
-								disabled={!(values.email && values.password)}
+								disabled={!(values.username && values.password)}
 							>
 								{processing ? (
 									<ActivityIndicator color="#fff" />

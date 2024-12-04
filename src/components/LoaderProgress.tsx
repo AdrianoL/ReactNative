@@ -6,7 +6,10 @@ interface LoaderProgressProps {
 	loadingText?: string;
 }
 
-const LoaderProgress: React.FC<LoaderProgressProps> = ({ isLoading, loadingText = 'Please Wait...' }) => {
+const LoaderProgress: React.FC<LoaderProgressProps> = ({
+	isLoading,
+	loadingText = 'Please Wait...',
+}) => {
 	if (!isLoading) return null;
 
 	return (

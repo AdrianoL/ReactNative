@@ -14,23 +14,10 @@ export class PhoneNumber {
 	CountryAccessCode?: any;
 }
 
-export class TravelerSecurityNumber {
-	ContryIssuance: string;
-	KnownTravelerNumber: string;
-	OldKnownTravelerNumber: string;
-	RedressNumber: string;
-	OldRedressNumber: string;
-}
-
 export class DocumentType {
 	public DocType: string = '';
 	public DocTypeText: string = '';
 	public DocLevel: string = '';
-}
-
-export class ADCByPass {
-	public Text: string = '';
-	public Value: string = '';
 }
 
 export class EmergencyPhone {
@@ -85,14 +72,6 @@ export class Country {
 	CountryName: string;
 	CountryCode: string;
 	PhoneAccessCode: string;
-}
-
-export class IssuingCountry {
-	item: string = 'CountryCode';
-	items: any[] = ['CountryCode', 'CountryName'];
-	length: number = 2;
-	isAlphaOnly: boolean = true;
-	country: Country = new Country();
 }
 
 export class Nationality {
@@ -152,55 +131,6 @@ export class ADCResponse {
 	ADCResponse: string;
 }
 
-export class ApisUpdateRequest {
-	Firstname: string;
-	Lastname: string;
-	SurnameRefNumber: string;
-	Prefix?: any;
-	RPH: string;
-	Emails: any[];
-	Gender: string;
-	PassengerTypeCode: string;
-	PhoneNumbers: PhoneNumber[];
-	TravelerSecurityNumbers: Array<TravelerSecurityNumber> = [];
-	DateOfBirth: string;
-	Age?: any;
-	AssociatedInfantRPH?: any;
-	AssociatedAdultRPH?: any;
-	FqtTravelers: any[];
-	Nationality: string;
-	EmergencyDetails: EmergencyDetail[];
-	KnownTravelerNumber?: any;
-	RedressNumber?: any;
-	OldKnownTravelerNumber?: any;
-	OldRedressNumber?: any;
-	FOID?: any;
-	OldNationality?: any;
-	OldDateOfBirth?: any;
-	OldGender?: any;
-	OldFOID?: any;
-	OldEmergencyDetails: any[];
-	AssociatedPassenger: AssociatedPassenger;
-	Documents: Document[];
-	ApisRequirements: ApisRequirement[];
-	ApisAddressRequirements: ApisAddressRequirements[];
-	Addresses: any[];
-	PSS_GivenName: string;
-	GivenNameReferenceNumber: string;
-	ExitDate: string;
-	ExitDateJustification: string;
-	PurposeOfVisit: string;
-	GivenName: string;
-	Surname: string;
-}
-
-export class AssociatedPassenger {
-	SurnameRefNumber: string = '';
-	Firstname: string = '';
-	Lastname: string = '';
-	RPH: string = '';
-}
-
 export class Address {
 	public IsRefValue: boolean = false;
 	public Type: string = '4';
@@ -219,87 +149,4 @@ export class Address {
 	public AddressRequired?: any = true;
 	public CountryCode: string = '';
 	public Country: string = '';
-}
-
-export class SecurityModel {
-	FlightNumber: string;
-	DepartureDate: string;
-	DepartureAirport: string;
-	BypassADC: string;
-	ApisUpdateRequests: ApisUpdateRequest[];
-	OrderUpdateRequests?: any;
-	messageLogs: boolean;
-	DocumentTypeList: DocumentType[];
-	DocumentType: any[] = [];
-	DocTypeIndex: any = [];
-	DocIssueCountryIndex: any = [];
-	ResidenceCodeIndex: any = [];
-	NationalityIndex: any = [];
-	TempDocumentTypeList: DocumentType[];
-	DocumentTypeIndexList: any[] = [];
-	ADCByPassList: ADCByPass[];
-	ADCByPassNameList: any[] = [];
-	ApisDocoStatus: string = '';
-	ADCStatus: string = '';
-}
-
-export class APISValidation {
-	Nationality: string;
-	CountryOfIssue: Array<string> = [];
-	CountryOfResidence: string;
-	DateOfBirth: boolean;
-	ExpireDate: Array<boolean> = [];
-	ExitDate: string;
-	DocID: Array<boolean> = [];
-	DocType: string;
-	Gender: string;
-	FirstName: Array<boolean> = [];
-	LastName: Array<boolean> = [];
-	CountryAddress: string;
-	isAddress: boolean;
-	isCity: boolean;
-	isState: boolean;
-	isPostal: boolean;
-	EmergencyName: string;
-	EmergencyContact: string;
-	isKnownTraveler: boolean;
-	isKnownTravelerCan: boolean;
-	KnownTraveler: string;
-	TravelerSecurityNumbers: Array<TravelerSecurityNumber> = [];
-}
-
-export class Validation {
-	CountryOfIssue: Array<string> = [];
-	CountryOfResidence: string;
-	DateOfBirth: boolean;
-	ExpireDate: Array<boolean> = [];
-	ExitDate: string;
-	DocID: Array<boolean> = [];
-	DocType: string;
-	Gender: string;
-	FirstName: Array<boolean> = [];
-	LastName: Array<boolean> = [];
-	CountryAddress: string;
-	isAddress: boolean;
-	isCity: boolean;
-	isState: boolean;
-	isPostal: boolean;
-	EmergencyName: string;
-	EmergencyContact: string;
-	isKnownTraveler: boolean = false;
-	isKnownTravelerCan: boolean = false;
-	KnownTraveler: string;
-}
-
-export class APISEnabled {
-	Nationality: boolean = true;
-	CountryOfIssue: boolean = true;
-	CountryOfResidence: boolean = true;
-	DateOfBirth: boolean = true;
-	ExpireDate: boolean = true;
-	DocID: boolean = true;
-	DocType: boolean = true;
-	FirstName: boolean = true;
-	LastName: boolean = true;
-	Gender: boolean = true;
 }

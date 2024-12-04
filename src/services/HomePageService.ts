@@ -1,18 +1,11 @@
 import axios from 'axios';
-import { API_ROUTES, HEADER_API_USER } from '../config/appConstants';
-import CheckinOrderService from './CheckinOrderService';
+import { API_ROUTES } from '../config/appConstants';
 import { handleErrors } from '../utils/AppExecutionTime';
 
 class HomePageService {
 	private headerApiuser: string;
 	private headerCurrency: string;
 	private salesOffice: string;
-
-	constructor(private checkinOrderService: CheckinOrderService) {
-		this.headerApiuser = HEADER_API_USER;
-		this.headerCurrency = this.checkinOrderService.getCurrency();
-		this.salesOffice = this.checkinOrderService.getUserPointofSale();
-	}
 
 	public async getCityService(): Promise<any> {
 		const headers = {

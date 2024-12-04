@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface User {
-	access_token: string;
-	email: string;
+	accessToken: string;
+	username: string;
 	firstname: string;
 	lastname: string;
 	// Otros campos según tu modelo

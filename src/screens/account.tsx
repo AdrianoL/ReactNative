@@ -111,7 +111,7 @@ const Account: React.FC = ({ navigation }) => {
 				<Text style={styles.signupText}>
 					{user.lastname}, {user.firstname}
 				</Text>
-				<Text style={styles.emailText}>{user.email}</Text>
+				<Text style={styles.usernameText}>{user.username}</Text>
 				<Text style={styles.roleText}>{user.address}</Text>
 				<View style={{ marginHorizontal: 24 }}>
 					<MaterialTextInput
@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 		paddingBottom: 10,
 	},
-	emailText: {
+	usernameText: {
 		fontSize: 18,
 		textAlign: 'center',
 		paddingBottom: 10,

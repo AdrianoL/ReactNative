@@ -1,58 +1,19 @@
+// src/components/NavigationScreen.tsx
 import React from 'react';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
-import Home from '../screens/home';
-import Account from '../screens/account';
-import Post from '../screens/post';
-import Links from '../screens/links';
-import SignUp from '../screens/signup';
-import SignIn from '../screens/signin';
-import Login from '../screens/login';
-import HeaderTabs from './header/HeaderTabs';
-
-export type RootStackParamList = {
-	Home: undefined;
-	Account: undefined;
-	Post: undefined;
-	Links: undefined;
-	SignUp: undefined;
-	SignIn: undefined;
-	Login: undefined;
-	ChartScreen: { roomName: string };
-};
-
-const Stack = createNativeStackNavigator<RootStackParamList>();
+import AppStack from '../navigation/AppStack';
+import AuthStack from '../navigation/AuthStack';
 
 const NavigationScreen: React.FC = () => {
 	const user = useSelector((state: RootState) => state.auth.user);
-	const authenticated = user && user.access_token;
+	const authenticated = !!user && !!user.accessToken;
 
 	return (
-		<Stack.Navigator initialRouteName={authenticated ? 'Home' : 'Home'}>
-			{authenticated ? (
-				<>
-					<Stack.Screen
-						name="Home"
-						component={Home}
-						options={{ headerRight: () => <HeaderTabs /> }}
-					/>
-					<Stack.Screen name="Account" component={Account} />
-					<Stack.Screen name="Post" component={Post} />
-					<Stack.Screen name="Links" component={Links} />
-				</>
-			) : (
-				<>
-					<Stack.Screen
-						name="Login"
-						component={Login}
-						options={{ headerShown: false }}
-					/>
-					<Stack.Screen name="SignUp" component={SignUp} />
-					<Stack.Screen name="SignIn" component={SignIn} />
-				</>
-			)}
-		</Stack.Navigator>
+		<NavigationContainer>
+			{authenticated ? <AppStack /> : <AuthStack />}
+		</NavigationContainer>
 	);
 };
 
