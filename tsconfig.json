@@ -7,6 +7,9 @@
 		"esModuleInterop": true, // Compatibilidad con módulos ES
 		"allowSyntheticDefaultImports": true, // Permite imports predeterminados sintéticos
 		"strict": true, // Habilita comprobaciones estrictas
+
+		"strictPropertyInitialization": false,
+		
 		"forceConsistentCasingInFileNames": true, // Forzar el uso consistente de mayúsculas/minúsculas en los nombres de archivo
 		"module": "esnext", // Módulo ESNext o CommonJS según prefieras
 		"moduleResolution": "node", // Resolución de módulos
