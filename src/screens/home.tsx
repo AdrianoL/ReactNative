@@ -10,6 +10,7 @@ import {
 	Alert,
 	ActivityIndicator,
 	Image,
+	SafeAreaView,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
@@ -21,6 +22,8 @@ import axios from 'axios';
 import { setUserProfile } from '../slices/userSlice';
 import FooterList from '../components/footer/FooterList';
 import HeaderTabs from '../components/header/HeaderTabs';
+
+import { commonStyles } from './StylesCommon';
 
 const Home: React.FC = () => {
 	const navigation = useNavigation();
@@ -61,9 +64,25 @@ const Home: React.FC = () => {
 	};
 
 	return (
-		<View style={styles.container}>
-			<Text>Bienvenido a Home</Text>
-		</View>
+		<>
+			<SafeAreaView style={commonStyles.container}>
+				<Text style={{ fontSize: 20, marginBottom: 20, fontWeight: 'bold' }}>
+					Bienvenido
+				</Text>
+				<TouchableOpacity
+					style={commonStyles.button}
+					onPress={() => navigation.navigate('OcrScan' as never)}
+				>
+					<Text style={commonStyles.buttonText}>Escanear DNI</Text>
+				</TouchableOpacity>
+				<TouchableOpacity
+					style={commonStyles.button}
+					onPress={() => navigation.navigate('ManualSearch' as never)}
+				>
+					<Text style={commonStyles.buttonText}>Búsqueda Manual</Text>
+				</TouchableOpacity>
+			</SafeAreaView>
+		</>
 		// <View style={styles.container}>
 		// 	<HeaderTabs />
 		// 	<ScrollView style={styles.body}>

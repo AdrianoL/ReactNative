@@ -12,7 +12,8 @@ const NavigationScreen: React.FC = () => {
 
 	return (
 		<NavigationContainer>
-			{authenticated ? <AppStack /> : <AuthStack />}
+			{/* {authenticated ? <AppStack /> : <AuthStack />} */}
+			{authenticated ? <AppStack /> : <AppStack />}
 		</NavigationContainer>
 	);
 };
