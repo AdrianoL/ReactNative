@@ -30,6 +30,8 @@ const SignIn = ({ navigation }) => {
 			const resp = await axios.post(API_ROUTES.LOGIN, {
 				email,
 				password,
+				client_id: 'yourClientId',
+				client_secret: 'yourClientSecret'
 			});
 			if (resp.data.error) {
 				alert(resp.data.error);
